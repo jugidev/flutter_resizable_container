@@ -11,6 +11,9 @@ class ResizableDivider {
     this.onHoverExit,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    this.useDragHandle = false,
+    this.dragHandle,
+    this.dragHandleAlignment = Alignment.center,
   }) : assert(thickness > 0, '[thickness] must be > 0.');
 
   /// The thickness of the line drawn within the divider.
@@ -55,4 +58,13 @@ class ResizableDivider {
 
   /// Triggers when the user's cursor ends hovering over this divider.
   final VoidCallback? onHoverExit;
+
+  /// Whether to use a drag handle for this divider.
+  final bool useDragHandle;
+
+  /// The drag handle to use for this divider.
+  final Widget? dragHandle;
+
+  /// The alignment of the drag handle within the divider.
+  final Alignment dragHandleAlignment;
 }

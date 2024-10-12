@@ -34,6 +34,19 @@ class _ResizableContainerDividerState extends State<ResizableContainerDivider> {
       final width = _getWidth(constraints.maxWidth);
       final height = _getHeight(constraints.maxHeight);
 
+      final customPaint = CustomPaint(
+        size: Size(width, height),
+        painter: DividerPainter(
+          direction: widget.direction,
+          color: widget.config.color ?? Theme.of(context).dividerColor,
+          thickness: widget.config.thickness,
+          crossAxisAlignment: widget.config.crossAxisAlignment,
+          length: widget.config.length,
+          mainAxisAlignment: widget.config.mainAxisAlignment,
+          padding: widget.config.padding,
+        ),
+      );
+
       return Align(
         alignment: switch (widget.config.crossAxisAlignment) {
           CrossAxisAlignment.start => switch (widget.direction) {
@@ -57,18 +70,37 @@ class _ResizableContainerDividerState extends State<ResizableContainerDivider> {
             onHorizontalDragStart: _onHorizontalDragStart,
             onHorizontalDragUpdate: _onHorizontalDragUpdate,
             onHorizontalDragEnd: _onHorizontalDragEnd,
-            child: CustomPaint(
-              size: Size(width, height),
-              painter: DividerPainter(
-                direction: widget.direction,
-                color: widget.config.color ?? Theme.of(context).dividerColor,
-                thickness: widget.config.thickness,
-                crossAxisAlignment: widget.config.crossAxisAlignment,
-                length: widget.config.length,
-                mainAxisAlignment: widget.config.mainAxisAlignment,
-                padding: widget.config.padding,
-              ),
-            ),
+            child: !widget.config.useDragHandle
+                ? customPaint
+                : Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      customPaint,
+                      Align(
+                        alignment: widget.config.dragHandleAlignment,
+                        child: widget.config.dragHandle ??
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceBright,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(360),
+                                  ),
+                                ),
+                                child: widget.direction == Axis.horizontal
+                                    ? const RotationTransition(
+                                        turns: AlwaysStoppedAnimation(0.25),
+                                        child: Icon(Icons.drag_handle),
+                                      )
+                                    : const Icon(Icons.drag_handle),
+                              ),
+                            ),
+                      ),
+                    ],
+                  ),
           ),
         ),
       );
